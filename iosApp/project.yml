@@ -1,4 +1,5 @@
 name: SoundCloud
+# iOS 12 compatibility test target
 options:
   deploymentTarget:
     iOS: "12.0"
