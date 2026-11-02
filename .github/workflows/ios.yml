@@ -62,11 +62,10 @@ jobs:
       - name: Collect Link Map
         run: |
           mkdir -p link-maps
-          find build/ios -type f -iname '*linkmap*.txt' -print -exec cp {} link-maps/ \\;
+          find build/ios -type f -iname '*linkmap*.txt' -print -exec cp -n {} link-maps/ \; || true
           echo "Collected Link Map files:"
-          ls -lah link-maps
-          test -n "$(find link-maps -type f -name '*.txt' -print -quit)"
-
+          find link-maps -maxdepth 1 -type f -print -exec ls -lh {} \;
+          test -n "$(find link-maps -maxdepth 1 -type f -name '*.txt' -print -quit)"
       - uses: actions/upload-artifact@v4
         with:
           name: ios-link-map
