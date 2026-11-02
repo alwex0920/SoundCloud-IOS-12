@@ -23,7 +23,7 @@ jobs:
             ~/.gradle/wrapper
             ~/.konan
             build/ios
-          key: ios12-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/*.kt', '**/*.kts', 'iosApp/project.yml') }
+          key: ios12-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/*.kt', '**/*.kts', 'iosApp/project.yml') }}
           restore-keys: |
             ios12-${{ runner.os }}-
 
