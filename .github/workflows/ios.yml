@@ -15,6 +15,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore Kotlin and Xcode build caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.konan
+            build/ios
+          key: ios12-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/*.kt', '**/*.kts', 'iosApp/project.yml') }
+          restore-keys: |
+            ios12-${{ runner.os }}-
+
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -23,7 +35,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Tools
-        run: brew install xcodegen ldid
+        run: brew install xcodegen
 
       - name: Generate Xcode project
         working-directory: iosApp
@@ -59,33 +71,6 @@ jobs:
           path: link-maps/*.txt
           if-no-files-found: error
           retention-days: 14
-
-      - name: Package IPA and TIPA
-        run: |
-          VERSION=$(./gradlew -q :app:printVersionName | tail -n 1)
-          APP=build/ios/Build/Products/Release-iphoneos/SoundCloud.app
-          ldid -SiosApp/SoundCloud.entitlements "$APP/SoundCloud"
-          rm -rf Payload && mkdir Payload && cp -R "$APP" Payload/
-          zip -qry "SoundCloud-iOS-$VERSION.ipa" Payload
-          cp "SoundCloud-iOS-$VERSION.ipa" "SoundCloud-iOS-$VERSION.tipa"
-          ls -la *.ipa *.tipa
-
-      - name: Inspect bundle
-        run: |
-          APP=Payload/SoundCloud.app
-          {
-            echo "size: $(du -sh "$APP" | cut -f1)"
-            echo "binary: $(lipo -info "$APP/SoundCloud" 2>&1 | sed 's/.*are: //')"
-            echo "compose resources: $(find "$APP" -path '*compose-resources*' -type f | wc -l | tr -d ' ')"
-            echo "strings: $(find "$APP" -path '*compose-resources*' -name 'strings*.cvr' | wc -l | tr -d ' ')"
-            echo "fonts: $(find "$APP" -path '*compose-resources*' -name '*.ttf' | wc -l | tr -d ' ')"
-            echo "background audio: $(/usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes:0' "$APP/Info.plist" 2>&1)"
-            echo "url scheme: $(/usr/libexec/PlistBuddy -c 'Print :CFBundleURLTypes:0:CFBundleURLSchemes:0' "$APP/Info.plist" 2>&1)"
-            echo "icon: $(ls "$APP" | grep -c AppIcon)"
-            ldid -e "$APP/SoundCloud" | tr -d '\n' | head -c 300
-          } > bundle.txt
-          cat bundle.txt
-          echo "::notice title=Bundle::$(tr '\n' ';' < bundle.txt | tr -d '%<>')"
 
       - name: Report build errors
         if: failure()
