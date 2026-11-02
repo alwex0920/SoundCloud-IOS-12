@@ -17,7 +17,7 @@ kotlin {
         commonMain.dependencies {
             api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
             api("org.jetbrains.compose.runtime:runtime:1.7.3")
-            api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+            api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
             api("org.jetbrains.kotlinx:kotlinx-io-core:0.6.0")
         }
         androidMain.dependencies {
