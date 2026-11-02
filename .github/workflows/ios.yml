@@ -44,6 +44,7 @@ jobs:
       - name: Build app
         run: |
           set -o pipefail
+          mkdir -p link-maps
           chmod +x gradlew
           xcodebuild \
             -project iosApp/SoundCloud.xcodeproj \
@@ -54,6 +55,7 @@ jobs:
             -derivedDataPath build/ios \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             LD_GENERATE_MAP_FILE=YES \
+            'LD_MAP_FILE_PATH=$(PROJECT_DIR)/../link-maps/$(PRODUCT_NAME)-$(CURRENT_ARCH).txt' \
             build 2>&1 | tee xcode-out.log | grep -E "error|warning: unable|BUILD" || true
           test -d build/ios/Build/Products/Release-iphoneos/SoundCloud.app
 
@@ -99,11 +101,3 @@ jobs:
               print('::' + kind + ' title=iOS build ' + str(n + 1) + '::' + esc(c))
           PY
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ios-ipa
-          path: |
-            SoundCloud-iOS-*.ipa
-            SoundCloud-iOS-*.tipa
-          if-no-files-found: error
-          retention-days: 14
