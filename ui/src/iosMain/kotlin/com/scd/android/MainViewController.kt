@@ -33,6 +33,7 @@ import com.scd.android.res.Res
 import com.scd.android.res.allStringResources
 import com.scd.android.res.qr_use_scanner
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDomainMask
@@ -55,7 +56,7 @@ fun MainViewController(): UIViewController {
     return vc
 }
 
-@OptIn(ExperimentalCoilApi::class)
+@OptIn(ExperimentalCoilApi::class, ExperimentalResourceApi::class)
 private fun installUi() {
     val caches = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, true).firstOrNull() as? String
     SingletonImageLoader.setSafe { buildScImageLoader(it, caches?.let { c -> "$c/images" }) }
