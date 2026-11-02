@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.ComposeUIViewController
 import coil3.SingletonImageLoader
+import coil3.annotation.ExperimentalCoilApi
 import com.scd.android.res.Res
 import com.scd.android.res.allStringResources
 import com.scd.android.res.qr_use_scanner
@@ -54,6 +55,7 @@ fun MainViewController(): UIViewController {
     return vc
 }
 
+@OptIn(ExperimentalCoilApi::class)
 private fun installUi() {
     val caches = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, true).firstOrNull() as? String
     SingletonImageLoader.setSafe { buildScImageLoader(it, caches?.let { c -> "$c/images" }) }
