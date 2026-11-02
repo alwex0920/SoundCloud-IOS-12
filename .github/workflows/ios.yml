@@ -41,8 +41,24 @@ jobs:
             -destination 'generic/platform=iOS' \
             -derivedDataPath build/ios \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            LD_GENERATE_MAP_FILE=YES \
             build 2>&1 | tee xcode-out.log | grep -E "error|warning: unable|BUILD" || true
           test -d build/ios/Build/Products/Release-iphoneos/SoundCloud.app
+
+      - name: Collect Link Map
+        run: |
+          mkdir -p link-maps
+          find build/ios -type f -iname '*linkmap*.txt' -print -exec cp {} link-maps/ \\;
+          echo "Collected Link Map files:"
+          ls -lah link-maps
+          test -n "$(find link-maps -type f -name '*.txt' -print -quit)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-link-map
+          path: link-maps/*.txt
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Package IPA and TIPA
         run: |
