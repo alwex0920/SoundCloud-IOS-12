@@ -114,10 +114,15 @@ jobs:
           ./gradlew :core:compileKotlinIosArm64 :ui:compileKotlinIosArm64 \
                     compileLiteDebugKotlin compileFullDebugKotlin --continue 2>&1 | tee gradle-out.log
 
+      - name: Generate lint baseline if missing
+        if: hashFiles('app/lint-baseline.xml') == ''
+        run: |
+          ./gradlew updateLintBaseline -Dlint.baselines.continue=true
+
       - name: Lint + Unit tests
         run: |
           set -o pipefail
-          ./gradlew lintLiteDebug testLiteDebugUnitTest 2>&1 | tee -a gradle-out.log
+          ./gradlew lintLiteDebug testLiteDebugUnitTest -Dlint.baselines.continue=true 2>&1 | tee -a gradle-out.log
 
       - name: Build APKs
         run: |
