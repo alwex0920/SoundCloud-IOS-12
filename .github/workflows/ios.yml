@@ -22,6 +22,32 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      # ─────────── НОВОЕ: патченный Compose под iOS 12 ───────────
+      - name: Download patched Compose Maven repo
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          github_token: ${{ secrets.COMPOSE_REPO_TOKEN }}
+          repo: alwex0920/compose-multiplatform-core
+          workflow: build-ios12.yml
+          workflow_conclusion: success
+          name: m2-ios12-repo
+          path: ./tmp-m2
+
+      - name: Unpack m2 into ~/.m2
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.m2/repository
+          tar -xzf ./tmp-m2/m2-ios12.tar.gz -C ~/.m2/repository/
+          rm -rf ./tmp-m2
+          echo "=== m2 size ==="
+          du -sh ~/.m2/repository
+          echo "=== iOS klibs (первые 5) ==="
+          find ~/.m2/repository -name "*.klib" | head -5
+          echo "=== compose groups ==="
+          ls ~/.m2/repository/androidx/compose/ 2>/dev/null | head -10 || true
+          ls ~/.m2/repository/org/jetbrains/compose/ 2>/dev/null | head -10 || true
+      # ─────────── /НОВОЕ ───────────
+
       - name: Tools
         run: brew install xcodegen ldid
 
