@@ -7,6 +7,9 @@ settings:
   base:
     MARKETING_VERSION: "0.4.5"
     CURRENT_PROJECT_VERSION: "10"
+    OTHER_LDFLAGS:
+      - $(inherited)
+      - -Wl,-ld_classic
 targets:
   SoundCloud:
     type: application
