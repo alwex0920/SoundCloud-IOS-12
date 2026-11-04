@@ -180,6 +180,7 @@ jobs:
             -project iosApp/SoundCloud.xcodeproj -scheme SoundCloud \
             -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
             -derivedDataPath build/ios \
+            OTHER_LDFLAGS='$(inherited) -ld_classic' \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             LD_GENERATE_MAP_FILE=YES \
             'LD_MAP_FILE_PATH=$(PROJECT_DIR)/../link-maps/$(PRODUCT_NAME)-$(CURRENT_ARCH).txt' \
@@ -242,6 +243,7 @@ jobs:
             -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
             -derivedDataPath build/ios \
             MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$CODE" \
+            OTHER_LDFLAGS='$(inherited) -ld_classic' \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             build 2>&1 | tee xcode-out.log | grep -E "error|warning: unable|BUILD" || true
           test -d build/ios/Build/Products/Release-iphoneos/SoundCloud.app
